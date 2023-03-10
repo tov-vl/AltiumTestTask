@@ -1,6 +1,5 @@
 ﻿using FileGenerator.Options;
 using FileSorter.Model;
-using System.Diagnostics;
 
 namespace FileGenerator
 {
@@ -12,22 +11,12 @@ namespace FileGenerator
         public static void GenerateFile(string[] args)
         {
             int linesNum;
-            string strContent;
+            string? strContent = null;
 
             if (args.Length == 0)
             {
                 var randGen = new Random();
-
                 linesNum = randGen.Next(MinLines, MaxLines);
-
-                var strLength = randGen.Next(1, 15);
-                var counter = 0;
-                strContent = string.Empty;
-                while (counter < strLength)
-                {
-                    strContent += (char)randGen.Next(65, 90);
-                    counter++;
-                }
             }
             else
             {
@@ -38,24 +27,29 @@ namespace FileGenerator
             WriteToFile(linesNum, strContent);
         }
 
-        private static void WriteToFile(int linesNum, string strContent)
+        private static void WriteToFile(int linesNum, string? strContent)
         {
             string path = Path.Combine(FileGeneratorOptions.Directory, FileGeneratorOptions.FileName);
             using TextWriter writer = File.CreateText(path);
 
             var randGen = new Random();
             var counter = 0;
+
+            var randomStringContent = strContent == null;
             while (counter < linesNum)
             {
                 var num = randGen.Next();
 
-                var strLength = randGen.Next(14, 16);
-                var strCounter = 0;
-                strContent = string.Empty;
-                while (strCounter < strLength)
+                if (randomStringContent)
                 {
-                    strContent += (char)randGen.Next(65, 91);
-                    strCounter++;
+                    var strLength = randGen.Next(14, 16);
+                    var strCounter = 0;
+                    strContent = string.Empty;
+                    while (strCounter < strLength)
+                    {
+                        strContent += (char)randGen.Next(65, 91);
+                        strCounter++;
+                    }
                 }
 
                 var row = new FileRow { Number = num, StringContent = strContent };
